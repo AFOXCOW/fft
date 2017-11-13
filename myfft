@@ -1,0 +1,27 @@
+function [y]=myfft(x)
+N=length(x);
+%_________________下标反序
+    a=1:N;
+    b=dec2bin(a-1);
+    c=b(:,end:-1:1);
+    c=bin2dec(c)+1;
+%________________________
+y=zeros(1,N);
+for i=1:N
+    y(i)=x(c(i));
+end
+for i=1:log2(N)
+    j=1;
+    temp=1;
+    while (j-2^(i-1)<N)
+        cache=y(j)+exp(-1i*2*pi*(temp-1)/2^i)*y(j+2^(i-1));
+        y(j+2^(i-1))=y(j)-exp(-1i*2*pi*(temp-1)/2^i)*y(j+2^(i-1));
+        y(j)=cache;
+        j=j+2^i;
+        if (j>N&&temp<2^(i-1))
+            j=temp+1;
+            temp=j;
+        end
+    end
+end
+end
